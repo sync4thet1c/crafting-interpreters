@@ -7,9 +7,11 @@ public class Scanner {
    private final String source;
    private final List<Token> tokens = new ArrayList<>();
    
+   //> scan-state
    private int start = 0;
    private int current = 0;
    private int line = 1;
+   //< scan-state
 
    Scanner(String source) {
     this.source = source;
@@ -66,9 +68,31 @@ public class Scanner {
             case '"': string(); break;
             
             default:
-                Lox.error(line, "Unexpected token.");
+                if (isDigit(c)) {
+                    number();
+                } else {
+                    Lox.error(line, "Unexpected token.");
+                }
                 break;
         }
+    }
+
+    private void number() {
+        while(isDigit(peek())) advance();
+
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance();
+        
+            while(isDigit(peek())) advance();
+        }
+
+        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+
+    }
+
+    private char peekNext() {
+        if(current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
     }
 
     private void string() {
@@ -91,6 +115,10 @@ public class Scanner {
     private char peek() {
         if(isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     private char advance() {
