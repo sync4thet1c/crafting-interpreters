@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+import static lox.TokenType.*;
+
 public class Scanner {
    private static final Map<String, TokenType> keywords;
 
@@ -22,7 +25,7 @@ public class Scanner {
     keywords.put("print", PRINT);
     keywords.put("return", RETURN);
     keywords.put("super", SUPER);
-    keywords.put("this", THIS);
+    // keywords.put("this", THIS);
     keywords.put("true", TRUE);
     keywords.put("var", VAR);
     keywords.put("while", WHILE);
@@ -69,7 +72,7 @@ public class Scanner {
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break; 
             case '!': addToken(match('=') ? BANG_EQUAL: BANG); break;
-            case '=': addToken(match('=') ? EQUAL_EQUAL: BANG; break;
+            case '=': addToken(match('=') ? EQUAL_EQUAL: BANG); break;
             case '<': addToken(match('=') ? LESS_EQUAL: BANG); break;
             case '>': addToken(match('=') ? GREATER_EQUAL: BANG); break;
             case '/': 
@@ -115,7 +118,7 @@ public class Scanner {
         while(isAlphaNumeric(peek())) advance();
 
         String text = source.substring(start, current);
-        Tokentype type = keywords.get(text);
+        TokenType type = keywords.get(text);
         if(type == null) type = IDENTIFIER;
         addToken(type);
     }
@@ -173,7 +176,7 @@ public class Scanner {
         addToken(type, null);
     }
 
-    private void addToken(TokenType type, object literal) {
+    private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
     }
